@@ -1,18 +1,18 @@
--- UnissHub: Tap Simulator Edition
+-- UnissHub: Tap Simulator Edition (Key-E Mode)
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
+local VirtualInputManager = game:GetService("VirtualInputManager") 
 local Player = Players.LocalPlayer
-local Mouse = Player:GetMouse()
 
 local DISCORD_LINK = "https://discord.gg/mVzz2KaZ"
 
--- Переменные автокликера
+-- Переменные для работы функций
 local autoClickerEnabled = false
 local clickDelay = 0.1
 
--- Функция анимации клика (универсальная)
+-- Функция анимации нажатия (плавный отклик)
 local function applyClickEffect(button)
     local startSize = button.Size
     button.InputBegan:Connect(function(input)
@@ -27,7 +27,7 @@ local function applyClickEffect(button)
     end)
 end
 
--- Функция перетаскивания
+-- Функция перетаскивания окна
 local function makeDraggable(gui)
     local dragging, dragInput, dragStart, startPos
     gui.InputBegan:Connect(function(input)
@@ -50,9 +50,9 @@ local function makeDraggable(gui)
 end
 
 local sg = Instance.new("ScreenGui", Player:WaitForChild("PlayerGui"))
-sg.Name = "UnissHub_TapSim"; sg.ResetOnSpawn = false
+sg.Name = "UnissHub_TapSim_Pro"; sg.ResetOnSpawn = false
 
--- КНОПКА U
+-- КНОПКА ОТКРЫТИЯ (U)
 local uBtn = Instance.new("TextButton", sg)
 uBtn.Size = UDim2.new(0, 50, 0, 50); uBtn.Position = UDim2.new(0, 50, 0.5, 0)
 uBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20); uBtn.Text = "U"
@@ -62,7 +62,7 @@ Instance.new("UIStroke", uBtn).Color = Color3.fromRGB(0, 150, 255)
 makeDraggable(uBtn)
 applyClickEffect(uBtn)
 
--- ГЛАВНОЕ ОКНО (35% экрана примерно)
+-- ГЛАВНОЕ ОКНО
 local main = Instance.new("Frame", sg)
 main.Size = UDim2.new(0, 450, 0, 300)
 main.Position = UDim2.new(0.5, 0, 0.5, 0); main.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -71,58 +71,57 @@ Instance.new("UICorner", main)
 Instance.new("UIStroke", main).Color = Color3.fromRGB(0, 120, 255)
 makeDraggable(main)
 
--- Боковая панель
+-- Боковая панель (Sidebar)
 local sideBar = Instance.new("Frame", main)
-sideBar.Size = UDim2.new(0, 120, 1, 0); sideBar.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+sideBar.Size = UDim2.new(0, 130, 1, 0); sideBar.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 Instance.new("UICorner", sideBar)
 
 local hubTitle = Instance.new("TextLabel", sideBar)
-hubTitle.Size = UDim2.new(1, 0, 0, 40); hubTitle.Text = "UnissHub"; hubTitle.TextColor3 = Color3.fromRGB(0, 150, 255)
-hubTitle.Font = Enum.Font.GothamBold; hubTitle.TextSize = 18; hubTitle.BackgroundTransparency = 1
+hubTitle.Size = UDim2.new(1, 0, 0, 50); hubTitle.Text = "UnissHub"; hubTitle.TextColor3 = Color3.fromRGB(0, 150, 255)
+hubTitle.Font = Enum.Font.GothamBold; hubTitle.TextSize = 20; hubTitle.BackgroundTransparency = 1
 
--- Кнопки меню
 local btnMain = Instance.new("TextButton", sideBar)
-btnMain.Size = UDim2.new(0.9, 0, 0, 35); btnMain.Position = UDim2.new(0.05, 0, 0.2, 0)
-btnMain.Text = "Основное"; btnMain.BackgroundColor3 = Color3.fromRGB(30, 30, 30); btnMain.TextColor3 = Color3.new(1,1,1)
+btnMain.Size = UDim2.new(0.9, 0, 0, 35); btnMain.Position = UDim2.new(0.05, 0, 0.25, 0)
+btnMain.Text = "Main"; btnMain.BackgroundColor3 = Color3.fromRGB(30, 30, 30); btnMain.TextColor3 = Color3.new(1,1,1)
 Instance.new("UICorner", btnMain)
 
 local btnComm = Instance.new("TextButton", sideBar)
-btnComm.Size = UDim2.new(0.9, 0, 0, 35); btnComm.Position = UDim2.new(0.05, 0, 0.35, 0)
-btnComm.Text = "Комьюнити"; btnComm.BackgroundColor3 = Color3.fromRGB(20, 20, 20); btnComm.TextColor3 = Color3.new(1,1,1)
+btnComm.Size = UDim2.new(0.9, 0, 0, 35); btnComm.Position = UDim2.new(0.05, 0, 0.4, 0)
+btnComm.Text = "Community"; btnComm.BackgroundColor3 = Color3.fromRGB(20, 20, 20); btnComm.TextColor3 = Color3.new(1,1,1)
 Instance.new("UICorner", btnComm)
 
--- Контентные части
+-- Основной контейнер для контента
 local container = Instance.new("Frame", main)
-container.Size = UDim2.new(0, 330, 1, 0); container.Position = UDim2.new(0, 120, 0, 0); container.BackgroundTransparency = 1
+container.Size = UDim2.new(0, 320, 1, 0); container.Position = UDim2.new(0, 130, 0, 0); container.BackgroundTransparency = 1
 
--- СТРАНИЦА: ОСНОВНОЕ
+-- СТРАНИЦА: MAIN
 local pageMain = Instance.new("Frame", container)
 pageMain.Size = UDim2.new(1, 0, 1, 0); pageMain.BackgroundTransparency = 1; pageMain.Visible = true
 
 local toggleAC = Instance.new("TextButton", pageMain)
-toggleAC.Size = UDim2.new(0.8, 0, 0, 40); toggleAC.Position = UDim2.new(0.1, 0, 0.2, 0)
-toggleAC.BackgroundColor3 = Color3.fromRGB(200, 50, 50); toggleAC.Text = "Автокликер: ВЫКЛ"
+toggleAC.Size = UDim2.new(0.8, 0, 0, 45); toggleAC.Position = UDim2.new(0.1, 0, 0.2, 0)
+toggleAC.BackgroundColor3 = Color3.fromRGB(200, 50, 50); toggleAC.Text = "Auto-Press [E]: OFF"
 toggleAC.TextColor3 = Color3.new(1,1,1); toggleAC.Font = Enum.Font.GothamBold; Instance.new("UICorner", toggleAC)
 
 local speedLabel = Instance.new("TextLabel", pageMain)
 speedLabel.Size = UDim2.new(0.8, 0, 0, 20); speedLabel.Position = UDim2.new(0.1, 0, 0.45, 0)
-speedLabel.Text = "Скорость (сек):"; speedLabel.TextColor3 = Color3.new(0.8, 0.8, 0.8); speedLabel.BackgroundTransparency = 1; speedLabel.TextXAlignment = Enum.TextXAlignment.Left
+speedLabel.Text = "Click Delay (seconds):"; speedLabel.TextColor3 = Color3.new(0.7, 0.7, 0.7); speedLabel.BackgroundTransparency = 1; speedLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 local speedInput = Instance.new("TextBox", pageMain)
 speedInput.Size = UDim2.new(0.8, 0, 0, 35); speedInput.Position = UDim2.new(0.1, 0, 0.55, 0)
 speedInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30); speedInput.Text = "0.1"; speedInput.TextColor3 = Color3.new(1,1,1)
 Instance.new("UICorner", speedInput)
 
--- СТРАНИЦА: КОМЬЮНИТИ
+-- СТРАНИЦА: COMMUNITY
 local pageComm = Instance.new("Frame", container)
 pageComm.Size = UDim2.new(1, 0, 1, 0); pageComm.BackgroundTransparency = 1; pageComm.Visible = false
 
 local dsBtn = Instance.new("TextButton", pageComm)
-dsBtn.Size = UDim2.new(0.8, 0, 0, 40); dsBtn.Position = UDim2.new(0.1, 0, 0.4, 0)
-dsBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242); dsBtn.Text = "Скопировать Discord"; dsBtn.TextColor3 = Color3.new(1,1,1)
+dsBtn.Size = UDim2.new(0.8, 0, 0, 45); dsBtn.Position = UDim2.new(0.1, 0, 0.4, 0)
+dsBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242); dsBtn.Text = "Copy Discord Link"; dsBtn.TextColor3 = Color3.new(1,1,1)
 Instance.new("UICorner", dsBtn)
 
--- ЛОГИКА ПЕРЕКЛЮЧЕНИЯ СТРАНИЦ
+-- Переключение вкладок
 btnMain.MouseButton1Click:Connect(function()
     pageMain.Visible = true; pageComm.Visible = false
     btnMain.BackgroundColor3 = Color3.fromRGB(30, 30, 30); btnComm.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
@@ -133,14 +132,14 @@ btnComm.MouseButton1Click:Connect(function()
     btnMain.BackgroundColor3 = Color3.fromRGB(20, 20, 20); btnComm.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 end)
 
--- ЛОГИКА АВТОКЛИКЕРА
+-- Работа автокликера (симуляция нажатия E)
 toggleAC.MouseButton1Click:Connect(function()
     autoClickerEnabled = not autoClickerEnabled
     if autoClickerEnabled then
-        toggleAC.Text = "Автокликер: ВКЛ"
+        toggleAC.Text = "Auto-Press [E]: ON"
         toggleAC.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
     else
-        toggleAC.Text = "Автокликер: ВЫКЛ"
+        toggleAC.Text = "Auto-Press [E]: OFF"
         toggleAC.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
     end
 end)
@@ -153,26 +152,27 @@ end)
 task.spawn(function()
     while true do
         if autoClickerEnabled then
-            -- Виртуальный клик в позицию мышки
             pcall(function()
-                local virtualUser = game:GetService("VirtualUser")
-                virtualUser:CaptureController()
-                virtualUser:ClickButton1(Vector2.new(Mouse.X, Mouse.Y))
+                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+                task.wait(0.02)
+                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
             end)
         end
         task.wait(clickDelay)
     end
 end)
 
--- Копирование дискорда
+-- Копирование ссылки
 dsBtn.MouseButton1Click:Connect(function()
-    setclipboard(DISCORD_LINK)
-    dsBtn.Text = "Скопировано!"
-    task.wait(2)
-    dsBtn.Text = "Скопировать Discord"
+    if setclipboard then
+        setclipboard(DISCORD_LINK)
+        dsBtn.Text = "Copied to Clipboard!"
+        task.wait(2)
+        dsBtn.Text = "Copy Discord Link"
+    end
 end)
 
--- Открытие/Закрытие
+-- Скрытие/Показ GUI
 uBtn.MouseButton1Click:Connect(function()
     main.Visible = not main.Visible
 end)
