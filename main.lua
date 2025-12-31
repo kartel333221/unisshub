@@ -115,7 +115,7 @@ pageMain.Size = UDim2.new(1, 0, 1, 0); pageMain.BackgroundTransparency = 1; page
 local toggleAC = Instance.new("TextButton", pageMain)
 toggleAC.Size = UDim2.new(0.7, 0, 0, 55); toggleAC.Position = UDim2.new(0.03, 0, 0.18, 0) -- Чуть шире и выше
 toggleAC.BackgroundColor3 = Color3.fromRGB(200, 50, 50); toggleAC.Text = "Auto Clicker: OFF"
-toggleAC.TextColor3 = Color3.new(1,1,1); toggleAC.Font = Enum.Font.GothamBold; toggleAC.TextSize = 24 -- УВЕЛИЧЕННЫЙ ШРИФТ
+toggleAC.TextColor3 = Color3.new(1,1,1); toggleAC.Font = Enum.Font.GothamBold; toggleAC.TextSize = 19 -- УВЕЛИЧЕННЫЙ ШРИФТ
 Instance.new("UICorner", toggleAC)
 applyClickEffect(toggleAC)
 
