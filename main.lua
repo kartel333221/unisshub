@@ -1,4 +1,4 @@
--- UnissHub: Tap Simulator (Control Buttons Edition)
+-- UnissHub: Tap Simulator (Big Font & Rounded)
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -51,7 +51,7 @@ local function makeDraggable(gui)
 end
 
 local sg = Instance.new("ScreenGui", Player:WaitForChild("PlayerGui"))
-sg.Name = "UnissHub_Final_V3"; sg.ResetOnSpawn = false
+sg.Name = "UnissHub_BigText_Final"; sg.ResetOnSpawn = false
 
 -- BUTTON U (Floating Toggle)
 local uBtn = Instance.new("TextButton", sg)
@@ -113,24 +113,25 @@ local pageMain = Instance.new("Frame", container)
 pageMain.Size = UDim2.new(1, 0, 1, 0); pageMain.BackgroundTransparency = 1; pageMain.Visible = true
 
 local toggleAC = Instance.new("TextButton", pageMain)
-toggleAC.Size = UDim2.new(0.65, 0, 0, 45); toggleAC.Position = UDim2.new(0.05, 0, 0.2, 0)
+toggleAC.Size = UDim2.new(0.7, 0, 0, 55); toggleAC.Position = UDim2.new(0.03, 0, 0.18, 0) -- Чуть шире и выше
 toggleAC.BackgroundColor3 = Color3.fromRGB(200, 50, 50); toggleAC.Text = "Auto Clicker: OFF"
-toggleAC.TextColor3 = Color3.new(1,1,1); toggleAC.Font = Enum.Font.GothamBold; Instance.new("UICorner", toggleAC)
+toggleAC.TextColor3 = Color3.new(1,1,1); toggleAC.Font = Enum.Font.GothamBold; toggleAC.TextSize = 22 -- УВЕЛИЧЕННЫЙ ШРИФТ
+Instance.new("UICorner", toggleAC)
 applyClickEffect(toggleAC)
 
 local gearBtn = Instance.new("TextButton", pageMain)
-gearBtn.Size = UDim2.new(0, 45, 0, 45); gearBtn.Position = UDim2.new(0.73, 0, 0.2, 0)
-gearBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40); gearBtn.Text = "⚙️"; gearBtn.TextSize = 20
+gearBtn.Size = UDim2.new(0, 55, 0, 55); gearBtn.Position = UDim2.new(0.76, 0, 0.18, 0)
+gearBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40); gearBtn.Text = "⚙️"; gearBtn.TextSize = 24
 gearBtn.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", gearBtn)
 applyClickEffect(gearBtn)
 
 local speedFrame = Instance.new("Frame", pageMain)
-speedFrame.Size = UDim2.new(0.88, 0, 0, 0); speedFrame.Position = UDim2.new(0.05, 0, 0.38, 0)
+speedFrame.Size = UDim2.new(0.88, 0, 0, 0); speedFrame.Position = UDim2.new(0.05, 0, 0.42, 0)
 speedFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25); speedFrame.ClipsDescendants = true; Instance.new("UICorner", speedFrame)
 Instance.new("UIStroke", speedFrame).Color = Color3.fromRGB(50, 50, 50)
 
 local speedInput = Instance.new("TextBox", speedFrame)
-speedInput.Size = UDim2.new(0.9, 0, 0, 30); speedInput.Position = UDim2.new(0.05, 0, 0.35, 0)
+speedInput.Size = UDim2.new(0.9, 0, 0, 35); speedInput.Position = UDim2.new(0.05, 0, 0.35, 0)
 speedInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40); speedInput.Text = "0.1"; speedInput.TextColor3 = Color3.new(1,1,1)
 Instance.new("UICorner", speedInput)
 
@@ -147,7 +148,7 @@ dsBtn.Size = UDim2.new(0.8, 0, 0, 45); dsBtn.Position = UDim2.new(0.1, 0, 0.4, 0
 dsBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242); dsBtn.Text = "Copy Discord Link"; dsBtn.TextColor3 = Color3.new(1,1,1)
 Instance.new("UICorner", dsBtn)
 
--- Logic
+-- Navigation
 btnMain.MouseButton1Click:Connect(function()
     pageMain.Visible = true; pageComm.Visible = false
     btnMain.BackgroundColor3 = Color3.fromRGB(30, 30, 30); btnComm.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
@@ -160,7 +161,7 @@ end)
 
 gearBtn.MouseButton1Click:Connect(function()
     settingsVisible = not settingsVisible
-    local targetSize = settingsVisible and UDim2.new(0.88, 0, 0, 65) or UDim2.new(0.88, 0, 0, 0)
+    local targetSize = settingsVisible and UDim2.new(0.88, 0, 0, 75) or UDim2.new(0.88, 0, 0, 0)
     speedFrame:TweenSize(targetSize, "Out", "Quart", 0.3, true)
 end)
 
@@ -175,7 +176,7 @@ speedInput.FocusLost:Connect(function()
     if val then clickDelay = val else speedInput.Text = tostring(clickDelay) end
 end)
 
--- Main Loop
+-- Loop
 task.spawn(function()
     while true do
         if autoClickerEnabled then
@@ -189,7 +190,6 @@ task.spawn(function()
     end
 end)
 
--- Close and Minimize Logic
 closeBtn.MouseButton1Click:Connect(function() sg:Destroy() end)
 miniBtn.MouseButton1Click:Connect(function() main.Visible = false end)
 uBtn.MouseButton1Click:Connect(function() main.Visible = not main.Visible end)
