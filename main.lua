@@ -29,7 +29,7 @@ local BrainrotCatalog = {
     ["Gattatino Nyanino"] = "Brainrot God",
 
     ["La Vacca Staturno Saturnita"] = "Secret",
-    ["Bisonte Giuppitere"] = "Secret",
+    ["67"] = "Secret",
 
     ["Strawberry Elephant"] = "OG",
     ["Blackhole Goat"] = "OG",
