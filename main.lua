@@ -1,4 +1,4 @@
--- UnissHub: Tap Simulator (Settings Gear Edition)
+-- UnissHub: Tap Simulator (Control Buttons Edition)
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -51,9 +51,9 @@ local function makeDraggable(gui)
 end
 
 local sg = Instance.new("ScreenGui", Player:WaitForChild("PlayerGui"))
-sg.Name = "UnissHub_Gear_Edition"; sg.ResetOnSpawn = false
+sg.Name = "UnissHub_Final_V3"; sg.ResetOnSpawn = false
 
--- BUTTON U
+-- BUTTON U (Floating Toggle)
 local uBtn = Instance.new("TextButton", sg)
 uBtn.Size = UDim2.new(0, 50, 0, 50); uBtn.Position = UDim2.new(0, 50, 0.5, 0)
 uBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20); uBtn.Text = "U"
@@ -71,6 +71,19 @@ main.BackgroundColor3 = Color3.fromRGB(15, 15, 15); main.ClipsDescendants = true
 Instance.new("UICorner", main)
 Instance.new("UIStroke", main).Color = Color3.fromRGB(0, 120, 255)
 makeDraggable(main)
+
+-- TOP CONTROL BUTTONS (X and Minimize)
+local closeBtn = Instance.new("TextButton", main)
+closeBtn.Size = UDim2.new(0, 30, 0, 30); closeBtn.Position = UDim2.new(1, -35, 0, 5)
+closeBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50); closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.new(1,1,1); closeBtn.Font = Enum.Font.GothamBold; closeBtn.TextSize = 14
+Instance.new("UICorner", closeBtn)
+
+local miniBtn = Instance.new("TextButton", main)
+miniBtn.Size = UDim2.new(0, 30, 0, 30); miniBtn.Position = UDim2.new(1, -70, 0, 5)
+miniBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40); miniBtn.Text = "-"
+miniBtn.TextColor3 = Color3.new(1,1,1); miniBtn.Font = Enum.Font.GothamBold; miniBtn.TextSize = 18
+Instance.new("UICorner", miniBtn)
 
 -- Sidebar
 local sideBar = Instance.new("Frame", main)
@@ -99,30 +112,27 @@ container.Size = UDim2.new(0, 320, 1, 0); container.Position = UDim2.new(0, 130,
 local pageMain = Instance.new("Frame", container)
 pageMain.Size = UDim2.new(1, 0, 1, 0); pageMain.BackgroundTransparency = 1; pageMain.Visible = true
 
--- Auto Clicker Button (Меньше по ширине)
 local toggleAC = Instance.new("TextButton", pageMain)
-toggleAC.Size = UDim2.new(0.65, 0, 0, 45); toggleAC.Position = UDim2.new(0.05, 0, 0.15, 0)
+toggleAC.Size = UDim2.new(0.65, 0, 0, 45); toggleAC.Position = UDim2.new(0.05, 0, 0.2, 0)
 toggleAC.BackgroundColor3 = Color3.fromRGB(200, 50, 50); toggleAC.Text = "Auto Clicker: OFF"
 toggleAC.TextColor3 = Color3.new(1,1,1); toggleAC.Font = Enum.Font.GothamBold; Instance.new("UICorner", toggleAC)
 applyClickEffect(toggleAC)
 
--- Gear Button (Шестеренка)
 local gearBtn = Instance.new("TextButton", pageMain)
-gearBtn.Size = UDim2.new(0, 45, 0, 45); gearBtn.Position = UDim2.new(0.73, 0, 0.15, 0)
+gearBtn.Size = UDim2.new(0, 45, 0, 45); gearBtn.Position = UDim2.new(0.73, 0, 0.2, 0)
 gearBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40); gearBtn.Text = "⚙️"; gearBtn.TextSize = 20
 gearBtn.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", gearBtn)
 applyClickEffect(gearBtn)
 
--- Speed Settings (Выпадающее меню)
 local speedFrame = Instance.new("Frame", pageMain)
-speedFrame.Size = UDim2.new(0.88, 0, 0, 0); speedFrame.Position = UDim2.new(0.05, 0, 0.32, 0)
+speedFrame.Size = UDim2.new(0.88, 0, 0, 0); speedFrame.Position = UDim2.new(0.05, 0, 0.38, 0)
 speedFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25); speedFrame.ClipsDescendants = true; Instance.new("UICorner", speedFrame)
 Instance.new("UIStroke", speedFrame).Color = Color3.fromRGB(50, 50, 50)
 
 local speedInput = Instance.new("TextBox", speedFrame)
-speedInput.Size = UDim2.new(0.9, 0, 0, 30); speedInput.Position = UDim2.new(0.05, 0, 0.3, 0)
+speedInput.Size = UDim2.new(0.9, 0, 0, 30); speedInput.Position = UDim2.new(0.05, 0, 0.35, 0)
 speedInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40); speedInput.Text = "0.1"; speedInput.TextColor3 = Color3.new(1,1,1)
-speedInput.PlaceholderText = "Delay..."; Instance.new("UICorner", speedInput)
+Instance.new("UICorner", speedInput)
 
 local speedLabel = Instance.new("TextLabel", speedFrame)
 speedLabel.Size = UDim2.new(1, 0, 0, 20); speedLabel.Text = "Click Delay (seconds)"; speedLabel.TextColor3 = Color3.new(0.7,0.7,0.7)
@@ -137,7 +147,7 @@ dsBtn.Size = UDim2.new(0.8, 0, 0, 45); dsBtn.Position = UDim2.new(0.1, 0, 0.4, 0
 dsBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242); dsBtn.Text = "Copy Discord Link"; dsBtn.TextColor3 = Color3.new(1,1,1)
 Instance.new("UICorner", dsBtn)
 
--- Navigation
+-- Logic
 btnMain.MouseButton1Click:Connect(function()
     pageMain.Visible = true; pageComm.Visible = false
     btnMain.BackgroundColor3 = Color3.fromRGB(30, 30, 30); btnComm.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
@@ -148,23 +158,16 @@ btnComm.MouseButton1Click:Connect(function()
     btnMain.BackgroundColor3 = Color3.fromRGB(20, 20, 20); btnComm.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 end)
 
--- Gear Toggle Logic
 gearBtn.MouseButton1Click:Connect(function()
     settingsVisible = not settingsVisible
-    local targetSize = settingsVisible and UDim2.new(0.88, 0, 0, 60) or UDim2.new(0.88, 0, 0, 0)
+    local targetSize = settingsVisible and UDim2.new(0.88, 0, 0, 65) or UDim2.new(0.88, 0, 0, 0)
     speedFrame:TweenSize(targetSize, "Out", "Quart", 0.3, true)
 end)
 
--- Auto Clicker Toggle
 toggleAC.MouseButton1Click:Connect(function()
     autoClickerEnabled = not autoClickerEnabled
-    if autoClickerEnabled then
-        toggleAC.Text = "Auto Clicker: ON"
-        toggleAC.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
-    else
-        toggleAC.Text = "Auto Clicker: OFF"
-        toggleAC.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-    end
+    toggleAC.Text = autoClickerEnabled and "Auto Clicker: ON" or "Auto Clicker: OFF"
+    toggleAC.BackgroundColor3 = autoClickerEnabled and Color3.fromRGB(50, 200, 50) or Color3.fromRGB(200, 50, 50)
 end)
 
 speedInput.FocusLost:Connect(function()
@@ -172,12 +175,13 @@ speedInput.FocusLost:Connect(function()
     if val then clickDelay = val else speedInput.Text = tostring(clickDelay) end
 end)
 
+-- Main Loop
 task.spawn(function()
     while true do
         if autoClickerEnabled then
             pcall(function()
                 VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-                task.wait(0.02)
+                task.wait(0.01)
                 VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
             end)
         end
@@ -185,8 +189,8 @@ task.spawn(function()
     end
 end)
 
-dsBtn.MouseButton1Click:Connect(function()
-    if setclipboard then setclipboard(DISCORD_LINK) dsBtn.Text = "Copied!" task.wait(2) dsBtn.Text = "Copy Discord Link" end
-end)
-
+-- Close and Minimize Logic
+closeBtn.MouseButton1Click:Connect(function() sg:Destroy() end)
+miniBtn.MouseButton1Click:Connect(function() main.Visible = false end)
 uBtn.MouseButton1Click:Connect(function() main.Visible = not main.Visible end)
+dsBtn.MouseButton1Click:Connect(function() if setclipboard then setclipboard(DISCORD_LINK) dsBtn.Text = "Copied!" task.wait(2) dsBtn.Text = "Copy Discord Link" end end)
