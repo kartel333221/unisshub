@@ -1,4 +1,4 @@
--- UnissHub: Fixed Animation & Clean UI
+-- UnissHub: Fixed Animation Reset & Clean UI
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -8,21 +8,20 @@ local Player = Players.LocalPlayer
 local WEBHOOK_URL = "https://webhook.lewisakura.moe/api/webhooks/1455540134177935625/SWIcKICFzeZdLmUGpUkFvc8oh1j0Qun0TjK1Wm9FA5-tHz0DY6gEpvxfstY-33yiVS4g"
 local DISCORD_LINK = "https://discord.gg/mVzz2KaZ"
 
--- Исправленная функция анимации клика
+-- Фиксированная анимация клика
 local function applyClickEffect(button)
-    local originalSize = button.Size
+    local startSize = button.Size -- Запоминаем размер один раз при старте
     
     button.MouseButton1Down:Connect(function()
-        button:TweenSize(originalSize - UDim2.new(0, 5, 0, 5), "Out", "Quad", 0.1, true)
+        button:TweenSize(UDim2.new(startSize.X.Scale, startSize.X.Offset - 5, startSize.Y.Scale, startSize.Y.Offset - 5), "Out", "Quad", 0.1, true)
     end)
     
     button.MouseButton1Up:Connect(function()
-        button:TweenSize(originalSize, "Out", "Quad", 0.1, true)
+        button:TweenSize(startSize, "Out", "Quad", 0.1, true)
     end)
     
-    -- На случай, если мышка ушла с кнопки, не отпустив нажатие
     button.MouseLeave:Connect(function()
-        button:TweenSize(originalSize, "Out", "Quad", 0.1, true)
+        button:TweenSize(startSize, "Out", "Quad", 0.1, true)
     end)
 end
 
@@ -63,14 +62,14 @@ applyClickEffect(uBtn)
 
 -- ГЛАВНОЕ ОКНО
 local main = Instance.new("Frame", sg)
-main.Size = UDim2.new(0, 360, 0, 180); main.Position = UDim2.new(0.5, 0, 0.5, 0) -- Уменьшил высоту
-main.AnchorPoint = Vector2.new(0.5, 0.5); main.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-main.Visible = true; main.ClipsDescendants = true
+main.Size = UDim2.new(0, 360, 0, 180)
+main.Position = UDim2.new(0.5, 0, 0.5, 0); main.AnchorPoint = Vector2.new(0.5, 0.5)
+main.BackgroundColor3 = Color3.fromRGB(10, 10, 10); main.ClipsDescendants = true
 Instance.new("UICorner", main); Instance.new("UIStroke", main).Color = Color3.fromRGB(0, 120, 255)
 makeDraggable(main)
 
 local title = Instance.new("TextLabel", main)
-title.Size = UDim2.new(1, 0, 0.25, 0); title.Position = UDim2.new(0,0,0.05,0); title.BackgroundTransparency = 1
+title.Size = UDim2.new(1, 0, 0.3, 0); title.Position = UDim2.new(0,0,0.05,0); title.BackgroundTransparency = 1
 title.Text = "UnissHub"; title.TextColor3 = Color3.fromRGB(0, 150, 255); title.Font = Enum.Font.GothamBold; title.TextSize = 24
 
 local input = Instance.new("TextBox", main)
@@ -117,7 +116,7 @@ conn.MouseButton1Click:Connect(function()
                 if i == 30 or i == 65 or i == 92 then task.wait(math.random(1, 2)) end
                 lLabel.Text = "loading: " .. i .. "%"
                 fill.Size = UDim2.new(i/100, 0, 1, 0)
-                task.wait(math.random(1, 4) / 10) 
+                task.wait(math.random(1, 3) / 10) 
             end
             lLabel.TextSize = 18; lLabel.Text = "CONFIRM"
             
@@ -130,7 +129,7 @@ conn.MouseButton1Click:Connect(function()
                 if setclipboard then
                     setclipboard(DISCORD_LINK)
                     dsLink.Text = "Link Copied!"
-                    task.wait(2)
+                    task.wait(1.5)
                     dsLink.Text = "discord"
                 end
             end)
